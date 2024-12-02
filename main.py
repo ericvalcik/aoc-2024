@@ -1,3 +1,5 @@
+from shutil import which
+
 actual_input = """98415   86712
 21839   96206
 14958   40971
@@ -1036,4 +1038,7 @@ def day1_task_two(input: str):
         ret += i * count
     return ret
 
-print(day1_task_two(actual_input))
+list = [1, 2, 3, 4]
+new_list = list[:]
+new_list.pop(1)
+print(new_list)
