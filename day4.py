@@ -218,5 +218,20 @@ def day4(input: str) -> int:
         xmas_count += line.count('SAMX')
     return xmas_count
 
+def check_xmas(matrix: List[str], x: int, y: int) -> int:
+    str_1 = matrix[y-1][x-1] + matrix[y][x] + matrix[y+1][x+1]
+    str_2 = matrix[y+1][x-1] + matrix[y][x] + matrix[y-1][x+1]
+    if str_1 in ['MAS', 'SAM'] and str_2 in ['MAS', 'SAM']:
+        return 1
+    return 0
+
+def day4_part2(input: str) -> int:
+    matrix = get_matrix(input)
+    xmas_count = 0
+    for y in range(1, len(matrix) - 1):
+        for x in range(1, len(matrix[0]) - 1):
+            xmas_count += check_xmas(matrix, x, y)
+    return xmas_count
+
 print()
-print(day4(actual))
+print(day4_part2(actual))
