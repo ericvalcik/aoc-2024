@@ -1420,8 +1420,11 @@ def check_update(arr: List[int], rules: List[List[bool]]) -> bool:
         for j in range(i):
             before = arr[j]
             if rules[curr][before]:
-                return False
-    return True
+                arr[i] = before
+                arr[j] = curr
+                check_update(arr, rules)
+                return True
+    return False
 
 
 def day5(input: str) -> int:
