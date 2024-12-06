@@ -141,69 +141,44 @@ actual = """.#..#......................#........#...............................
 .#...........#...#.........#....#...#.......#....#........................#...................#...#..................#............
 .........##......#..............................#....................#..#...#..................#............................#....."""
 
-def parse_input(input: str) -> Tuple[List[List[str]], Tuple[int, int, str]]:
-    matrix = [list(line) for line in input.split('\n')]
-    for i in range(len(matrix)):
-        for j in range(len(matrix[i])):
-            if matrix[i][j] == '^':
-                return matrix, (i, j, 'up')
+grid = list(map(list, actual.splitlines()))
 
-def is_within_pos(matrix: List[List[str]], pos: Tuple[int, int, str]) -> bool:
-    i, j, _ = pos
-    if i < 0 or i >= len(matrix):
-        return False
-    if j < 0 or j >= len(matrix[0]):
-        return False
-    return True
+rows = len(grid)
+cols = len(grid[0])
 
-def rotate(direction: str) -> str:
-    if direction == 'up':
-        return 'right'
-    if direction == 'right':
-        return 'down'
-    if direction == 'down':
-        return 'left'
-    if direction == 'left':
-        return 'up'
-    raise Exception(f"Invalid direction in rorate(): {direction}")
-
-def get_new_pos(pos: Tuple[int, int], direction: str) -> Tuple[int, int]:
-    i, j = pos
-    if direction == 'up':
-        return i - 1, j
-    if direction == 'right':
-        return i, j + 1
-    if direction == 'down':
-        return i + 1, j
-    if direction == 'left':
-        return i, j - 1
-    raise Exception(f"Invalid direction in get_new_pos(): {direction}")
-
-def step(matrix: List[List[str]], pos: Tuple[int, int, str]) -> Tuple[List[List[str]], Tuple[int, int, str]]:
-    i, j, direction = pos
-    matrix[i][j] = 'X'
-    new_i, new_j = get_new_pos((i, j), direction)
-
-    if is_within_pos(matrix, (new_i, new_j, '')) and matrix[new_i][new_j] == '#':
-        new_direction = rotate(direction)
-        i_rotated, j_rotated = get_new_pos((i, j), new_direction)
-        return matrix, (i_rotated, j_rotated, new_direction)
+for r in range(rows):
+    for c in range(cols):
+        if grid[r][c] == "^":
+            break
     else:
-        return matrix, (new_i, new_j, direction)
+        continue
+    break
 
+def loops(grid, r, c):
+    dr = -1
+    dc = 0
 
-def day6(input: str) -> int:
-    matrix, pos = parse_input(input)
-    while is_within_pos(matrix, pos):
-        matrix, pos = step(matrix, pos)
+    seen = set()
 
-    # count Xes
-    count = 0
-    for line in matrix:
-        for place in line:
-            if place == 'X':
-                count += 1
-    return count
+    while True:
+        seen.add((r, c, dr, dc))
+        if r + dr < 0 or r + dr >= rows or c + dc < 0 or c + dc >= cols: return False
+        if grid[r + dr][c + dc] == "#":
+            dc, dr = -dr, dc
+        else:
+            r += dr
+            c += dc
+        if (r, c, dr, dc) in seen:
+            return True
 
+count = 0
 
-print(day6(actual))
+for cr in range(rows):
+    for cc in range(cols):
+        if grid[cr][cc] != ".": continue
+        grid[cr][cc] = "#"
+        if loops(grid, r, c):
+            count += 1
+        grid[cr][cc] = "."
+
+print(count)
